@@ -194,7 +194,7 @@ FGuid UFileDownloadManager::AddTaskByUrl(const FString& InUrl, const FString& In
 }
 
 
-bool UFileDownloadManager::SetPreviewTotalSize(const FGuid& InGID, int32 InTotalSize)
+bool UFileDownloadManager::SetPreviewTotalSize(const FGuid& InGID, int64 InTotalSize)
 {
 	int32 TempIndex = FindTaskByGuid(InGID);
 	if (TempIndex > INDEX_NONE && TaskList[TempIndex]->GetTotalSize() < 1)
