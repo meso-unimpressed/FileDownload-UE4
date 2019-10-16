@@ -19,7 +19,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAllTaskCompleted, int32, ErrorCou
  * FileDownloadManager, this class is the interface of the plugin, use this class download file as far as possible (both c++ & blueprint)
  */
 UCLASS(BlueprintType)
-class FILEDOWNLOADER_API UFileDownloadManager : public UObject, public FTickableGameObject
+class FILEDOWNLOADER_API UFileDownloadManager : public UObject /*, public FTickableGameObject*/
 {
 	GENERATED_BODY()
 public:
@@ -97,12 +97,13 @@ public:
 	/************************************************************************/
 	/* Interface for TickableObject                                         */
 	/************************************************************************/
-	virtual void Tick(float DeltaTime) override;
-	virtual TStatId GetStatId() const override;
+	//virtual void Tick(float DeltaTime) override;
+	//virtual TStatId GetStatId() const override;
 	
 	//tick interval
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float TickInterval = 0.2f;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//	float TickInterval = 0.2f;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int32 MaxParallelTask = 8;
 	UPROPERTY(BlueprintAssignable)

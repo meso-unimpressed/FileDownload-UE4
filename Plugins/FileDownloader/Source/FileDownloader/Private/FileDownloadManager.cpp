@@ -4,36 +4,36 @@
 #include "DownloadTask.h"
 #include "Paths.h"
 
-void UFileDownloadManager::Tick(float DeltaTime)
-{
-	if (bStopAll)
-	{
-		return;
-	}
-	static float TimeCount = 0.f;
-	TimeCount += DeltaTime;
-	if (TimeCount >= TickInterval)
-	{
-		TimeCount = 0.f;
-		//broadcast event
+//void UFileDownloadManager::Tick(float DeltaTime)
+//{
+//	if (bStopAll)
+//	{
+//		return;
+//	}
+//	static float TimeCount = 0.f;
+//	TimeCount += DeltaTime;
+//	if (TimeCount >= TickInterval)
+//	{
+//		TimeCount = 0.f;
+//		//broadcast event
+//
+//		//find task to do
+//		if (CurrentDoingWorks < MaxParallelTask && TaskList.Num())
+//		{
+//			int32 Idx = FindTaskToDo();
+//			if (Idx > INDEX_NONE)
+//			{
+//				TaskList[Idx]->Start();
+//				++CurrentDoingWorks;
+//			}
+//		}
+//	}
+//}
 
-		//find task to do
-		if (CurrentDoingWorks < MaxParallelTask && TaskList.Num())
-		{
-			int32 Idx = FindTaskToDo();
-			if (Idx > INDEX_NONE)
-			{
-				TaskList[Idx]->Start();
-				++CurrentDoingWorks;
-			}
-		}
-	}
-}
-
-TStatId UFileDownloadManager::GetStatId() const
-{
-	return TStatId();
-}
+//TStatId UFileDownloadManager::GetStatId() const
+//{
+//	return TStatId();
+//}
 
 
 void UFileDownloadManager::BeginDestroy()
@@ -49,6 +49,8 @@ void UFileDownloadManager::StartAll()
 	for (int32 i =0; i < TaskList.Num(); ++i)
 	{
 		TaskList[i]->SetNeedStop(false);
+		TaskList[i]->Start();
+		++CurrentDoingWorks;
 	}
 }
 
@@ -58,7 +60,8 @@ void UFileDownloadManager::StartTask(const FGuid& InGuid)
 	if (ret > INDEX_NONE)
 	{
 		TaskList[ret]->SetNeedStop(false);
-		bStopAll = false;
+		TaskList[ret]->Start();
+		++CurrentDoingWorks;
 	}
 }
 
