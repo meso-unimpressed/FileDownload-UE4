@@ -9,6 +9,7 @@
 #include "IHttpRequest.h"
 #include "IHttpResponse.h"
 #include "GenericPlatform/GenericPlatformHttp.h"
+#include "Async.h"
 
 const FString TEMP_FILE_EXTERN = TEXT(".dlFile");
 const FString TASK_JSON = TEXT(".task");
@@ -98,22 +99,22 @@ const FString& DownloadTask::GetDirectory() const
 	return TaskInfo.DestDirectory;
 }
 
-void DownloadTask::SetTotalSize(int32 InTotalSize)
+void DownloadTask::SetTotalSize(int64 InTotalSize)
 {
 	TaskInfo.TotalSize = InTotalSize;
 }
 
-int32 DownloadTask::GetTotalSize() const
+int64 DownloadTask::GetTotalSize() const
 {
 	return TaskInfo.TotalSize;
 }
 
-void DownloadTask::SetCurrentSize(int32 InCurrentSize)
+void DownloadTask::SetCurrentSize(int64 InCurrentSize)
 {
 	TaskInfo.CurrentSize = InCurrentSize;
 }
 
-int32 DownloadTask::GetCurrentSize() const
+int64 DownloadTask::GetCurrentSize() const
 {
 	return TaskInfo.CurrentSize;
 }
@@ -326,7 +327,11 @@ void DownloadTask::OnGetHeadCompleted(FHttpRequestPtr InRequest, FHttpResponsePt
 
 	if (RetutnCode == 200)
 	{
-		SetTotalSize(InResponse->GetContentLength());
+		FString xFileSize = InResponse->GetHeader("X-File-Size");
+		if (xFileSize.IsEmpty())
+			SetTotalSize(InResponse->GetContentLength());
+		else
+			SetTotalSize(FCString::Atoi64(*xFileSize));
 	}
 
 	TargetFile = PlatformFile->OpenWrite(*FString(GetFullFileName() + TEMP_FILE_EXTERN), true);
@@ -399,8 +404,8 @@ void DownloadTask::StartChunk()
 	Request->SetVerb("GET");
 	Request->SetURL(EncodedUrl);
 
-	int32 StartPostion = GetCurrentSize();
-	int32 EndPosition = StartPostion + ChunkSize - 1;
+	int64 StartPostion = GetCurrentSize();
+	int64 EndPosition = StartPostion + ChunkSize - 1;
 	//lastPosition = TotalSize-1 
 	if (EndPosition >= GetTotalSize())
 	{
@@ -413,7 +418,7 @@ void DownloadTask::StartChunk()
 		return;
 	}
 
-	FString RangeStr = FString("bytes=") + FString::FromInt(StartPostion) + FString(TEXT("-")) + FString::FromInt(EndPosition);
+	FString RangeStr = FString("bytes=") + FString::Printf(TEXT("%lld"), StartPostion) + FString(TEXT("-")) + FString::Printf(TEXT("%lld"), EndPosition);
 	Request->SetHeader(FString("Range"), RangeStr);
 
 	Request->OnProcessRequestComplete().BindRaw(this, &DownloadTask::OnGetChunkCompleted);
@@ -465,7 +470,7 @@ void DownloadTask::OnGetChunkCompleted(FHttpRequestPtr InRequest, FHttpResponseP
 	DataBuffer = InResponse->GetContent();
 
 
-#if 0
+#if 1
 	//Async write chunk buffer to file 
 	Async<void>(EAsyncExecution::ThreadPool, [this]()
 	{
@@ -562,7 +567,7 @@ void DownloadTask::OnTaskCompleted()
 	}
 }
 
-void DownloadTask::OnWriteChunkEnd(int32 DataSize)
+void DownloadTask::OnWriteChunkEnd(int64 DataSize)
 {
 	if (GetState() != ETaskState::DOWNLOADING)
 	{

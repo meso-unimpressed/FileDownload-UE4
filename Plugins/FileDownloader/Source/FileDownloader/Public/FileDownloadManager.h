@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "TaskInformation.h"
 #include "Tickable.h"
+#include "DownloadEvent.h"
+
 #include "FileDownloadManager.Generated.h"
 
 
@@ -56,7 +58,7 @@ public:
 		int32 GetTotalPercent() const;
 
 	UFUNCTION(BlueprintCallable)
-		void GetByteSize(int32& OutCurrentSize, int32& OutTotalSize) const;
+		void GetByteSize(int64& OutCurrentSize, int64& OutTotalSize) const;
 
 	/*
 	 *stop and remove all tasks
@@ -84,7 +86,7 @@ public:
 		FGuid AddTaskByUrl(const FString& InUrl, const FString& InDirectory = TEXT(""), const FString& InFileName = TEXT(""), bool InOverride = false);
 
 	UFUNCTION(BlueprintCallable)
-		bool SetPreviewTotalSize(const FGuid& InGID, int32 InTotalSize);
+		bool SetPreviewTotalSize(const FGuid& InGID, int64 InTotalSize);
 
 	/*
 	 *get default directory
@@ -102,7 +104,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float TickInterval = 0.2f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		int32 MaxParallelTask = 5;
+		int32 MaxParallelTask = 8;
 	UPROPERTY(BlueprintAssignable)
 		FDLManagerDelegate OnDlManagerEvent;
 	UPROPERTY(BlueprintAssignable)

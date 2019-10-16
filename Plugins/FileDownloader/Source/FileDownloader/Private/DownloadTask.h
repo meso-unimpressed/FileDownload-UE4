@@ -37,13 +37,13 @@ public:
 
 	virtual const FString& GetDirectory() const;
 
-	virtual void SetTotalSize(int32 InTotalSize);
+	virtual void SetTotalSize(int64 InTotalSize);
 	
-	virtual int32 GetTotalSize() const;
+	virtual int64 GetTotalSize() const;
 
-	virtual void SetCurrentSize(int32 InCurrentSize);
+	virtual void SetCurrentSize(int64 InCurrentSize);
 
-	virtual int32 GetCurrentSize() const;
+	virtual int64 GetCurrentSize() const;
 
 	virtual int32 GetPercentage() const;
 
@@ -94,14 +94,14 @@ protected:
 
 	virtual void OnTaskCompleted();
 
-	virtual void OnWriteChunkEnd(int32 DataSize);
+	virtual void OnWriteChunkEnd(int64 DataSize);
 
 	FTaskInformation TaskInfo;
 
 	ETaskState TaskState = ETaskState::WAIT;
 	
-	//2MB as one section to download
-	int32 ChunkSize = 2 * 1024 * 1024;
+	//10MB as one section to download
+	int32 ChunkSize = 10 * 1024 * 1024;
 
 	TArray<uint8> DataBuffer;
 	

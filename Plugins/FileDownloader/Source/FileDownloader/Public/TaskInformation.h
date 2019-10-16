@@ -45,9 +45,9 @@ public:
 		FString ETag = FString("");
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-		int32 CurrentSize = 0;
+		int64 CurrentSize = 0;
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-		int32 TotalSize = 0;
+		int64 TotalSize = 0;
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 		FGuid GUID = FGuid::NewGuid();
 };

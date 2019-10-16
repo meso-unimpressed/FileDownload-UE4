@@ -106,7 +106,7 @@ int32 UFileDownloadManager::GetTotalPercent() const
 }
 
 
-void UFileDownloadManager::GetByteSize(int32& OutCurrentSize, int32& OutTotalSize) const
+void UFileDownloadManager::GetByteSize(int64& OutCurrentSize, int64& OutTotalSize) const
 {
 	OutCurrentSize = 0;
 	OutTotalSize = 0;
